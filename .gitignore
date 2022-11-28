@@ -476,3 +476,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 nupkgs/**
+format-report.json

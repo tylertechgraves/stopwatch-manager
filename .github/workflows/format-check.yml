@@ -1,0 +1,53 @@
+name: Format Check
+on:
+  pull_request:
+concurrency:
+  group: pr-format-check-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  check-format:
+    runs-on: ubuntu-latest
+    steps:
+      # check out as tcp-automation so fixes can trigger a build
+      - name: Get Token
+        id: get_workflow_token
+        uses: peter-murray/workflow-application-token-action@v1
+        with:
+          application_id: ${{ secrets.APPLICATION_ID }}
+          application_private_key: ${{ secrets.APPLICATION_PRIVATE_KEY }}
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+          token: ${{ steps.get_workflow_token.outputs.token }}
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "7.0.x"
+      - name: Check formatting
+        id: formatting
+        run: |
+          if ! make -f .github/workflows/format-check.Makefile format-auto-fix; then
+            echo "formatting_changes=true" >> $GITHUB_OUTPUT
+            printf "### :red_circle: Formatting issues\n\n\`\`\`json\n$(cat format-report.json)\n\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'chore: formatting'
+      - name: Create comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: ${{ steps.formatting.outputs.formatting_changes == 'true' }}
+        with:
+          recreate: true
+          header: format-check
+          message: |
+            :red_circle: `dotnet format` detected problems. Please correct any formatting issues.
+
+            See the full summary in the [run output](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+      - name: Fail if there are formatting issues
+        if: ${{ steps.formatting.outputs.formatting_changes == 'true' }}
+        run: |
+          exit 1
+    env:
+      ARTIFACTORY_USERNAME: "${{ secrets.CORPDEV_ARTIFACTORY_USERNAME }}"
+      ARTIFACTORY_PASSWORD: "${{ secrets.CORPDEV_ARTIFACTORY_PASSWORD }}"  
