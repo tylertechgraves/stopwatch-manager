@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stopwatch-manager", "stopwatch-manager\stopwatch-manager.csproj", "{D59C03A0-7327-4FAC-977E-EF4F1B158F74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test-harness", "test-harness\test-harness.csproj", "{F48103BA-BF85-46EC-9156-3AF24B097FCF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D59C03A0-7327-4FAC-977E-EF4F1B158F74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D59C03A0-7327-4FAC-977E-EF4F1B158F74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D59C03A0-7327-4FAC-977E-EF4F1B158F74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D59C03A0-7327-4FAC-977E-EF4F1B158F74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F48103BA-BF85-46EC-9156-3AF24B097FCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F48103BA-BF85-46EC-9156-3AF24B097FCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F48103BA-BF85-46EC-9156-3AF24B097FCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F48103BA-BF85-46EC-9156-3AF24B097FCF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
