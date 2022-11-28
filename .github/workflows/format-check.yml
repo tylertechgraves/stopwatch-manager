@@ -48,6 +48,3 @@ jobs:
         if: ${{ steps.formatting.outputs.formatting_changes == 'true' }}
         run: |
           exit 1
-    env:
-      ARTIFACTORY_USERNAME: "${{ secrets.CORPDEV_ARTIFACTORY_USERNAME }}"
-      ARTIFACTORY_PASSWORD: "${{ secrets.CORPDEV_ARTIFACTORY_PASSWORD }}"  
