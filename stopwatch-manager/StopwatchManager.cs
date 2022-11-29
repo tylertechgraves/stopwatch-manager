@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 
@@ -16,8 +16,8 @@ public class StopwatchManager
     private readonly ILogger? _msLogger;
     private const string LOG_PREFIX = "TIMELOG";
     private const string LOG_PREFIX_ELAPSED = "TIMELOG_ELAPSED";
-    private string _logPrefix = LOG_PREFIX;
-    private string _logPrefixElapsed = LOG_PREFIX_ELAPSED;
+    private readonly string _logPrefix = LOG_PREFIX;
+    private readonly string _logPrefixElapsed = LOG_PREFIX_ELAPSED;
 
     /// <summary>
     /// Stopwatch manager constructor
