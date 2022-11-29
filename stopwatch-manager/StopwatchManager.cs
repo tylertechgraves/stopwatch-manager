@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 
@@ -16,6 +16,8 @@ public class StopwatchManager
     private readonly ILogger? _msLogger;
     private const string LOG_PREFIX = "TIMELOG";
     private const string LOG_PREFIX_ELAPSED = "TIMELOG_ELAPSED";
+    private string _logPrefix = LOG_PREFIX;
+    private string _logPrefixElapsed = LOG_PREFIX_ELAPSED;
 
     /// <summary>
     /// Stopwatch manager constructor
@@ -31,12 +33,42 @@ public class StopwatchManager
     /// <summary>
     /// Stopwatch manager constructor
     /// </summary>
+    /// <param name="logger">A Serilog ILogger instance that can be used for logging in the consuming application</param>
+    /// <param name="logPrefix">The string used to prefix initial stopwatch logs</param>
+    /// <param name="logPrefixElapsed">A string used to prefix elapsed time stopwatch logs</param>
+    public StopwatchManager(Serilog.ILogger logger, string logPrefix, string logPrefixElapsed)
+    {
+        _serilogLogger = logger;
+        _msLogger = null;
+        _stopwatches = new();
+        _logPrefix = logPrefix;
+        _logPrefixElapsed = logPrefixElapsed;
+    }
+
+    /// <summary>
+    /// Stopwatch manager constructor
+    /// </summary>
     /// <param name="logger">A Microsoft.Extensions.Logging.ILogger instance that can be used for logging in the consuming application</param>
     public StopwatchManager(ILogger logger)
     {
         _serilogLogger = null;
         _msLogger = logger;
         _stopwatches = new();
+    }
+
+    /// <summary>
+    /// Stopwatch manager constructor
+    /// </summary>
+    /// <param name="logger">A Microsoft.Extensions.Logging.ILogger instance that can be used for logging in the consuming application</param>
+    /// <param name="logPrefix">The string used to prefix initial stopwatch logs</param>
+    /// <param name="logPrefixElapsed">A string used to prefix elapsed time stopwatch logs</param>
+    public StopwatchManager(ILogger logger, string logPrefix, string logPrefixElapsed)
+    {
+        _serilogLogger = null;
+        _msLogger = logger;
+        _stopwatches = new();
+        _logPrefix = logPrefix;
+        _logPrefixElapsed = logPrefixElapsed;
     }
 
     /// <summary>
