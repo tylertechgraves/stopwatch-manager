@@ -23,6 +23,10 @@ jobs:
         with:
           application_id: ${{ secrets.APPLICATION_ID }}
           application_private_key: ${{ secrets.APPLICATION_PRIVATE_KEY }}
+      - name: Setup git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions@github.com"
       - uses: actions/checkout@v2
         if: ${{ github.event_name == 'pull_request' }}
         with:
@@ -96,10 +100,6 @@ jobs:
         id: dockerbuild
         run: |
           docker build -t "${{ steps.buildtag.outputs.imageTag }}" --build-arg CONFIGURATION=Release .
-      - name: Setup git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions@github.com"
       - name: Create tag on PR builds
         if: ${{ github.event_name == 'pull_request' }}
         run: |
