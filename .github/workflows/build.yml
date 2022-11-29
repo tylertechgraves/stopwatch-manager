@@ -1,0 +1,117 @@
+name: Build
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    paths:
+      - 'stopwatch-manager/**'
+      - 'Dockerfile'
+concurrency:
+  group: ${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # if: ${{ github.actor != 'dependabot[bot]' }}
+    steps:
+      - name: Setup git
+        run: |
+          git config --global user.name "stopwatch-manager[bot]"
+          git config --global user.email "github-actions@github.com"
+      - uses: actions/checkout@v2
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v2
+        if: ${{ github.event_name == 'push' }}
+        with:
+          fetch-depth: 0
+      # This is required because Github does not support conditionally required checks on branch protection rules. We will exit
+      # successfully if there are no changes.
+      # We have to set an output variable and check it since actions doesn't have a way to terminate early successfully.
+      - name: Check for changes
+        if: ${{ github.event_name == 'pull_request' }}
+        id: changes
+        run: |
+          current=${{ github.event.pull_request.head.sha }}
+          last=${{ github.event.pull_request.base.sha }}
+          if git diff --quiet $last $current -- stopwatch-manager Dockerfile; then
+            echo "No changes, skipping build"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Determine next version
+        uses: paulhatch/semantic-version@v3.1.1
+        id: semver
+        with:
+          branch: "main"
+          tag_prefix: "v"
+          major_pattern: "(MAJOR)"
+          minor_pattern: "(MINOR)"
+          format: "${major}.${minor}.${patch}"
+      - name: Get branch
+        id: getbranch
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo "branch=${GITHUB_HEAD_REF#refs/heads/}" >> $GITHUB_OUTPUT
+          echo "safebranch=$(echo -n "${GITHUB_HEAD_REF#refs/heads/}" | tr -c '[:alnum:]-' '-' | tr A-Z a-z)" >> $GITHUB_OUTPUT
+      - name: Determine next version (PR)
+        uses: paulhatch/semantic-version@v3.1.1
+        id: semverpr
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          branch: ${{ steps.getbranch.outputs.branch }}
+          tag_prefix: ${{ steps.getbranch.outputs.safebranch }}-v
+          major_pattern: "(MAJOR)"
+          minor_pattern: "(MINOR)"
+          format: "${major}.${minor}.${patch}"
+      - name: Build tag
+        id: buildtag
+        run: |
+          if [ "$GITHUB_EVENT_NAME" != "push" ]; then
+            # This is a hack to use the version number from the main branch if we haven't generated
+            # a version number for this branch yet.
+            if [ "${{ steps.semverpr.outputs.version }}" = "0.1.0" ]
+            then
+              nugetTag="${{ steps.semver.outputs.version }}-${{ steps.getbranch.outputs.safebranch }}"
+              tag="${{ steps.getbranch.outputs.safebranch }}-v${{ steps.semver.outputs.version }}"
+            else
+              nugetTag="${{ steps.semverpr.outputs.version }}-${{ steps.getbranch.outputs.safebranch }}"
+              tag="${{ steps.getbranch.outputs.safebranch }}-v${{ steps.semverpr.outputs.version }}"
+            fi
+          else
+            nugetTag="${{ steps.semver.outputs.version }}"
+            tag="${{ steps.semver.outputs.version }}"
+          fi
+          echo "nugetTag=$nugetTag" >> $GITHUB_OUTPUT
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+          echo "imageTag=stopwatch-manager:$tag" >> $GITHUB_OUTPUT
+      - name: Multi-stage docker build
+        id: dockerbuild
+        run: |
+          docker build -t "${{ steps.buildtag.outputs.imageTag }}" --build-arg CONFIGURATION=Release .
+      - name: Create tag on PR builds
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          tag="${{ steps.buildtag.outputs.tag }}"
+          if [ -n "$(git tag -l "$tag")" ]; then
+              echo "removing existing tag \"$tag\""
+              git tag -d "$tag"
+              git push origin ":refs/tags/$tag"
+          fi
+          git tag -a "$tag" -m "PR build"
+          git push origin "$tag"
+      - name: Create Release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        if: ${{ github.event_name == 'push' }} 
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: "v${{ steps.semver.outputs.version }}"
+          allowUpdates: false
+          body: |
+            ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false

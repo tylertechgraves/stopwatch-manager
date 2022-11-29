@@ -16,6 +16,8 @@ public class StopwatchManager
     private readonly ILogger? _msLogger;
     private const string LOG_PREFIX = "TIMELOG";
     private const string LOG_PREFIX_ELAPSED = "TIMELOG_ELAPSED";
+    private readonly string _logPrefix = LOG_PREFIX;
+    private readonly string _logPrefixElapsed = LOG_PREFIX_ELAPSED;
 
     /// <summary>
     /// Stopwatch manager constructor
@@ -31,12 +33,42 @@ public class StopwatchManager
     /// <summary>
     /// Stopwatch manager constructor
     /// </summary>
+    /// <param name="logger">A Serilog ILogger instance that can be used for logging in the consuming application</param>
+    /// <param name="logPrefix">The string used to prefix initial stopwatch logs</param>
+    /// <param name="logPrefixElapsed">A string used to prefix elapsed time stopwatch logs</param>
+    public StopwatchManager(Serilog.ILogger logger, string logPrefix, string logPrefixElapsed)
+    {
+        _serilogLogger = logger;
+        _msLogger = null;
+        _stopwatches = new();
+        _logPrefix = logPrefix;
+        _logPrefixElapsed = logPrefixElapsed;
+    }
+
+    /// <summary>
+    /// Stopwatch manager constructor
+    /// </summary>
     /// <param name="logger">A Microsoft.Extensions.Logging.ILogger instance that can be used for logging in the consuming application</param>
     public StopwatchManager(ILogger logger)
     {
         _serilogLogger = null;
         _msLogger = logger;
         _stopwatches = new();
+    }
+
+    /// <summary>
+    /// Stopwatch manager constructor
+    /// </summary>
+    /// <param name="logger">A Microsoft.Extensions.Logging.ILogger instance that can be used for logging in the consuming application</param>
+    /// <param name="logPrefix">The string used to prefix initial stopwatch logs</param>
+    /// <param name="logPrefixElapsed">A string used to prefix elapsed time stopwatch logs</param>
+    public StopwatchManager(ILogger logger, string logPrefix, string logPrefixElapsed)
+    {
+        _serilogLogger = null;
+        _msLogger = logger;
+        _stopwatches = new();
+        _logPrefix = logPrefix;
+        _logPrefixElapsed = logPrefixElapsed;
     }
 
     /// <summary>
@@ -176,7 +208,7 @@ public class StopwatchManager
             return false;
 
         if (writeLog)
-            LogStart("{prefix}: {eventDescription} timer started", LOG_PREFIX, eventDescription);
+            LogStart("{prefix}: {eventDescription} timer started", eventDescription);
 
         return true;
     }
@@ -188,7 +220,7 @@ public class StopwatchManager
             return false;
 
         if (writeLogResult)
-            LogResult("{prefix}: {eventDescription} {duration}", LOG_PREFIX_ELAPSED, eventDescription, timespan);
+            LogResult("{prefix}: {eventDescription} {duration}", eventDescription, timespan);
 
         return true;
     }
@@ -228,26 +260,26 @@ public class StopwatchManager
     }
 
 #pragma warning disable CA2254
-    private void LogStart(string description, string logPrefix, string eventDescription)
+    private void LogStart(string description, string eventDescription)
     {
         if (_serilogLogger != null)
         {
-            _serilogLogger.Information(description, logPrefix, eventDescription);
+            _serilogLogger.Information(description, _logPrefix, eventDescription);
             return;
         }
 
-        _msLogger?.LogInformation(description, logPrefix, eventDescription);
+        _msLogger?.LogInformation(description, _logPrefix, eventDescription);
     }
 
-    private void LogResult(string description, string logPrefix, string eventDescription, TimeSpan timespan)
+    private void LogResult(string description, string eventDescription, TimeSpan timespan)
     {
         if (_serilogLogger != null)
         {
-            _serilogLogger.Information(description, logPrefix, eventDescription, timespan.TotalMilliseconds);
+            _serilogLogger.Information(description, _logPrefixElapsed, eventDescription, timespan.TotalMilliseconds);
             return;
         }
 
-        _msLogger?.LogInformation(description, logPrefix, eventDescription, timespan.TotalMilliseconds);
+        _msLogger?.LogInformation(description, _logPrefixElapsed, eventDescription, timespan.TotalMilliseconds);
     }
 #pragma warning restore CA2254
 }
