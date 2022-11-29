@@ -10,20 +10,6 @@ on:
 concurrency:
   group: ${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
-permissions:
-  actions: write
-  checks: write
-  contents: write
-  deployments: write
-  id-token: write
-  issues: write
-  discussions: write
-  packages: write
-  pages: write
-  pull-requests: write
-  repository-projects: write
-  security-events: write
-  statuses: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -62,7 +48,7 @@ jobs:
           last=${{ github.event.pull_request.base.sha }}
           if git diff --quiet $last $current -- stopwatch-manager Dockerfile; then
             echo "No changes, skipping build"
-            echo "::set-output name=changed::false"
+            echo "changed=false" >> $GITHUB_OUTPUT
           fi
       - name: Determine next version
         uses: paulhatch/semantic-version@v3.1.1
@@ -77,8 +63,8 @@ jobs:
         id: getbranch
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          echo "##[set-output name=branch;]${GITHUB_HEAD_REF#refs/heads/}"
-          echo "##[set-output name=safebranch;]$(echo -n "${GITHUB_HEAD_REF#refs/heads/}" | tr -c '[:alnum:]-' '-' | tr A-Z a-z)"
+          echo "branch=${GITHUB_HEAD_REF#refs/heads/}" >> $GITHUB_OUTPUT
+          echo "safebranch=$(echo -n "${GITHUB_HEAD_REF#refs/heads/}" | tr -c '[:alnum:]-' '-' | tr A-Z a-z)" >> $GITHUB_OUTPUT
       - name: Determine next version (PR)
         uses: paulhatch/semantic-version@v3.1.1
         id: semverpr
@@ -107,9 +93,9 @@ jobs:
             nugetTag="${{ steps.semver.outputs.version }}"
             tag="${{ steps.semver.outputs.version }}"
           fi
-          echo "##[set-output name=nugetTag;]$nugetTag"
-          echo "##[set-output name=tag;]$tag"
-          echo "##[set-output name=imageTag;]stopwatch-manager:$tag"
+          echo "nugetTag=$nugetTag" >> $GITHUB_OUTPUT
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+          echo "imageTag=stopwatch-manager:$tag" >> $GITHUB_OUTPUT
       - name: Multi-stage docker build
         id: dockerbuild
         run: |
