@@ -16,13 +16,13 @@ jobs:
     # if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
       # check out as tcp-automation so fixes can trigger a build
-      - name: Get Token
-        id: get_workflow_token
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: peter-murray/workflow-application-token-action@v1
-        with:
-          application_id: ${{ secrets.APPLICATION_ID }}
-          application_private_key: ${{ secrets.APPLICATION_PRIVATE_KEY }}
+      # - name: Get Token
+      #   id: get_workflow_token
+      #   if: ${{ github.event_name == 'pull_request' }}
+      #   uses: peter-murray/workflow-application-token-action@v1
+      #   with:
+      #     application_id: ${{ secrets.APPLICATION_ID }}
+      #     application_private_key: ${{ secrets.APPLICATION_PRIVATE_KEY }}
       - name: Setup git
         run: |
           git config --global user.name "stopwatch-manager[bot]"
@@ -32,7 +32,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
-          token: ${{ steps.get_workflow_token.outputs.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/checkout@v2
         if: ${{ github.event_name == 'push' }}
         with:
