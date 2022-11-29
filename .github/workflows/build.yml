@@ -25,8 +25,8 @@ jobs:
           application_private_key: ${{ secrets.APPLICATION_PRIVATE_KEY }}
       - name: Setup git
         run: |
-          git config --global user.name "Mark Graves"
-          git config --global user.email "mark.graves@tylertech.com"
+          git config --global user.name "stopwatch-manager[bot]"
+          git config --global user.email "github-actions@github.com"
       - uses: actions/checkout@v2
         if: ${{ github.event_name == 'pull_request' }}
         with:
