@@ -96,6 +96,10 @@ jobs:
         id: dockerbuild
         run: |
           docker build -t "${{ steps.buildtag.outputs.imageTag }}" --build-arg CONFIGURATION=Release .
+      - name: Setup git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions@github.com"
       - name: Create tag on PR builds
         if: ${{ github.event_name == 'pull_request' }}
         run: |
