@@ -208,7 +208,7 @@ public class StopwatchManager
             return false;
 
         if (writeLog)
-            LogStart("{prefix}: {eventDescription} timer started", LOG_PREFIX, eventDescription);
+            LogStart("{prefix}: {eventDescription} timer started", eventDescription);
 
         return true;
     }
@@ -220,7 +220,7 @@ public class StopwatchManager
             return false;
 
         if (writeLogResult)
-            LogResult("{prefix}: {eventDescription} {duration}", LOG_PREFIX_ELAPSED, eventDescription, timespan);
+            LogResult("{prefix}: {eventDescription} {duration}", eventDescription, timespan);
 
         return true;
     }
@@ -260,26 +260,26 @@ public class StopwatchManager
     }
 
 #pragma warning disable CA2254
-    private void LogStart(string description, string logPrefix, string eventDescription)
+    private void LogStart(string description, string eventDescription)
     {
         if (_serilogLogger != null)
         {
-            _serilogLogger.Information(description, logPrefix, eventDescription);
+            _serilogLogger.Information(description, _logPrefix, eventDescription);
             return;
         }
 
-        _msLogger?.LogInformation(description, logPrefix, eventDescription);
+        _msLogger?.LogInformation(description, _logPrefix, eventDescription);
     }
 
-    private void LogResult(string description, string logPrefix, string eventDescription, TimeSpan timespan)
+    private void LogResult(string description, string eventDescription, TimeSpan timespan)
     {
         if (_serilogLogger != null)
         {
-            _serilogLogger.Information(description, logPrefix, eventDescription, timespan.TotalMilliseconds);
+            _serilogLogger.Information(description, _logPrefixElapsed, eventDescription, timespan.TotalMilliseconds);
             return;
         }
 
-        _msLogger?.LogInformation(description, logPrefix, eventDescription, timespan.TotalMilliseconds);
+        _msLogger?.LogInformation(description, _logPrefixElapsed, eventDescription, timespan.TotalMilliseconds);
     }
 #pragma warning restore CA2254
 }
