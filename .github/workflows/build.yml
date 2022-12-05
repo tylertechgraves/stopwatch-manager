@@ -92,6 +92,15 @@ jobs:
         id: dockerbuild
         run: |
           docker build -t "${{ steps.buildtag.outputs.imageTag }}" --build-arg CONFIGURATION=Release .
+      - name: pack nuget
+        if: ${{ github.event_name == 'pull_request' }} 
+        run: |
+          dotnet pack --configuration Release -o ./nupkgs /p:PackageVersion=${{ steps.semver.outputs.version }}
+      - name: pack and push nuget
+        if: ${{ github.event_name == 'push' }} 
+        run: |
+          dotnet pack --configuration Release -o ./nupkgs /p:PackageVersion=${{ steps.semver.outputs.version }}
+          dotnet nuget push "./nupkgs/stopwatch-manager.${{ steps.semver.outputs.version }}.nupkg" --api-key "$NUGET_PUSH_API_KEY" --source https://api.nuget.org/v3/index.json
       - name: Create tag on PR builds
         if: ${{ github.event_name == 'pull_request' }}
         run: |
@@ -115,3 +124,6 @@ jobs:
             ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
+    env:
+      NUGET_PUSH_API_KEY: "${{ secrets.NUGET_PUSH_API_KEY }}"
+      DOCKER_BUILDKIT: "1"
