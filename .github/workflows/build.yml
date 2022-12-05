@@ -92,11 +92,6 @@ jobs:
         id: dockerbuild
         run: |
           docker build -t "${{ steps.buildtag.outputs.imageTag }}" --build-arg CONFIGURATION=Release .
-      - name: pack nuget
-        if: ${{ github.event_name == 'pull_request' }} 
-        run: |
-          cd stopwatch-manager
-          dotnet pack --configuration Release -o ./nupkgs /p:PackageVersion=${{ steps.semver.outputs.version }}
       - name: Create tag on PR builds
         if: ${{ github.event_name == 'pull_request' }}
         run: |
@@ -120,6 +115,11 @@ jobs:
             ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
+      - name: pack nuget
+        if: ${{ github.event_name == 'pull_request' }} 
+        run: |
+          cd stopwatch-manager
+          dotnet pack --configuration Release -o ./nupkgs /p:PackageVersion=${{ steps.semver.outputs.version }}
       - name: pack and push nuget
         if: ${{ github.event_name == 'push' }} 
         run: |
