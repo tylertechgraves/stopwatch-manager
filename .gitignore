@@ -476,4 +476,5 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 nupkgs/**
+stopwatch-manager/nupkgs/**
 format-report.json
