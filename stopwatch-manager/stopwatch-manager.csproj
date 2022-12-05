@@ -6,6 +6,11 @@
     <RootNamespace>stopwatch_manager</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageId>stopwatch-manager</PackageId>
+    <RepositoryUrl>https://github.com/tylertechgraves/stopwatch-manager</RepositoryUrl>
+    <Authors>Mark Graves</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
