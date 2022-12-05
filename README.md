@@ -19,3 +19,5 @@ an out TimeSpan parameter.
 
 This may not be a library you'll ship to production, but it will help you get to production faster
 by allowing complex time recordings for operations you perform in your source code.
+
+You can get a copy of this NuGet from the following location: [https://www.nuget.org/packages/stopwatch-manager/](https://www.nuget.org/packages/stopwatch-manager/)
