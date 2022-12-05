@@ -16,7 +16,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageReleaseNotes>$([System.IO.File]::ReadAllText("../release-notes.txt"))</PackageReleaseNotes>
-    <PackageTags>.net stopwatch manager concurrent timer core</PackageTags>
+    <PackageTags>.net stopwatch manager concurrent timer core dictionary</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
