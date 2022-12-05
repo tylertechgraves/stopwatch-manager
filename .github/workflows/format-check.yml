@@ -26,7 +26,8 @@ jobs:
       - name: Check formatting
         id: formatting
         run: |
-          if ! make -f .github/workflows/format-check.Makefile format-auto-fix; then
+          cd stopwatch-manager
+          if ! make -f ../.github/workflows/format-check.Makefile format-auto-fix; then
             echo "formatting_changes=true" >> $GITHUB_OUTPUT
             printf "### :red_circle: Formatting issues\n\n\`\`\`json\n$(cat format-report.json)\n\`\`\`" >> $GITHUB_STEP_SUMMARY
           fi
