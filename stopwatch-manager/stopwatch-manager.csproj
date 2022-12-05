@@ -7,14 +7,20 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>stopwatch-manager</PackageId>
+    <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/tylertechgraves/stopwatch-manager</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/tylertechgraves/stopwatch-manager</PackageProjectUrl>
     <Authors>Mark Graves</Authors>
+    <Copyright>Copyright (c) Mark Graves 2022.</Copyright>
+    <Description>A Concurrent Stopwatch Manager for .NET</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <PackageReleaseNotes>$([System.IO.File]::ReadAllText("release-notes.txt"))</PackageReleaseNotes>
+    <PackageTags>.net stopwatch manager concurrent timer core</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="\"/>
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup>
