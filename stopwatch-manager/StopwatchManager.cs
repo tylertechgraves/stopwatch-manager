@@ -249,7 +249,7 @@ public class StopwatchManager
                 stopwatch.Reset();
 
                 if (remove)
-                    _stopwatches.Remove(key, out _);
+                    _stopwatches.TryRemove(key, out _);
 
                 return true;
             }
