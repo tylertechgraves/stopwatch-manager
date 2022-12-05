@@ -73,7 +73,7 @@ public class StopwatchManager
 
     /// <summary>
     /// This method will add a new stopwatch to the collection, using
-    /// <paramref name="eventKey"/> as its key, and will start the timer.
+    /// <paramref name="eventKey"/> as its key, and will start it.
     /// If a stopwatch with a key of <paramref name="eventKey"/> already exists,
     /// this method takes no action. Once the stopwatch is started,
     /// a log will be written indicating as such.
@@ -88,7 +88,7 @@ public class StopwatchManager
 
     /// <summary>
     /// This method will add a new stopwatch to the collection, using
-    /// <paramref name="eventKey"/> as its key, and will start the timer.
+    /// <paramref name="eventKey"/> as its key, and will start it.
     /// If a stopwatch with a key of <paramref name="eventKey"/> already exists,
     /// this method takes no action.
     /// </summary>
