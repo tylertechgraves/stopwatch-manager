@@ -3,3 +3,6 @@ Initial release
 
 - 1.0.1
 Updates to NuGet XML documentation
+
+- 1.0.2
+Automation of NuGet release notes

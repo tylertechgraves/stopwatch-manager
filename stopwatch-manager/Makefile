@@ -1,4 +1,3 @@
-
 .PHONY: format
 format: ## format all files
 	@dotnet format --report format-report.json
