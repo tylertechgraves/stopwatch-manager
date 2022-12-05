@@ -108,7 +108,7 @@ public class StopwatchManager
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
     /// <param name="timespan">Provides timespan measurement of stopped stopwatch</param>
-    /// <returns>True if stopwatch was found and stopped; otherwise, false.</returns>
+    /// <returns>True if stopwatch was found and stopped; otherwise false.</returns>
     public bool TryStop(string eventKey, out TimeSpan timespan)
     {
         return TryStop(eventKey, out timespan, true, false);
@@ -121,7 +121,7 @@ public class StopwatchManager
     /// Once stopped, this method logs the elapsed time of the stopped stopwatch.
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
-    /// <returns>True if stopwatch was found and stopped; otherwise, false.</returns>
+    /// <returns>True if stopwatch was found and stopped; otherwise false.</returns>
     public bool TryStop(string eventKey)
     {
         return TryStop(eventKey, out _, true, false);
@@ -134,7 +134,7 @@ public class StopwatchManager
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
     /// <param name="timespan">Provides timespan measurement of stopped stopwatch</param>
-    /// <returns>True if stopwatch was found and stopped; otherwise, false.</returns>
+    /// <returns>True if stopwatch was found and stopped; otherwise false.</returns>
     public bool TryStopNoLog(string eventKey, out TimeSpan timespan)
     {
         var stopped = TryStopStopwatch(eventKey, out timespan, false);
@@ -152,7 +152,7 @@ public class StopwatchManager
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
     /// <param name="timespan">Provides timespan measurement of stopped stopwatch</param>
-    /// <returns>True if stopwatch was found and stopped; otherwise, false.</returns>
+    /// <returns>True if stopwatch was found and stopped; otherwise false.</returns>
     public bool TryStopAndRemove(string eventKey, out TimeSpan timespan)
     {
         return TryStop(eventKey, out timespan, true, true);
@@ -165,7 +165,7 @@ public class StopwatchManager
     /// Once stopped, this method logs the elapsed time of the stopped stopwatch.
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
-    /// <returns>True if stopwatch was found and stopped; otherwise, false.</returns>
+    /// <returns>True if stopwatch was found and stopped; otherwise false.</returns>
     public bool TryStopAndRemove(string eventKey)
     {
         return TryStop(eventKey, out _, true, true);
@@ -177,7 +177,7 @@ public class StopwatchManager
     /// If the stopwatch is not found, this method takes no action.
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
-    /// <returns>True if stopwatch was found and stopped; otherwise, false.</returns>
+    /// <returns>True if stopwatch was found and stopped; otherwise false.</returns>
     public bool TryStopAndRemoveNoLog(string eventKey)
     {
         return TryStop(eventKey, out _, false, true);
@@ -188,7 +188,7 @@ public class StopwatchManager
     /// and will reset it if found. If the stopwatch is not found, this method takes no action.
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
-    /// <returns>True if stopwatch was found and reset; otherwise, false.</returns>
+    /// <returns>True if stopwatch was found and reset; otherwise false.</returns>
     public bool Reset(string eventKey)
     {
         var found = _stopwatches.TryGetValue(eventKey, out var stopwatch);
