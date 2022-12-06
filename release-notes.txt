@@ -6,3 +6,6 @@ Updates to NuGet XML documentation
 
 - 1.0.2
 Automation of NuGet release notes
+
+- 1.0.3
+Added Restart(), LogStopwatchList(), and GetStopwatchKeys() 
