@@ -201,6 +201,57 @@ public class StopwatchManager
         return false;
     }
 
+    /// <summary>
+    /// This method will find the stopwatch with key <paramref name="eventKey"/>
+    /// and will reset and start it if found. If the stopwatch is not found, this method takes no action.
+    /// </summary>
+    /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
+    /// <returns>True if stopwatch was found, reset, and started; otherwise false.</returns>
+    public bool Restart(string eventKey)
+    {
+        var found = _stopwatches.TryGetValue(eventKey, out var stopwatch);
+        if (found)
+        {
+            stopwatch?.Reset();
+            stopwatch?.Start();
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// This method logs each stopwatch key and its current elapsed milliseconds
+    /// </summary>
+    public void LogStopwatchList()
+    {
+        var stopwatchListing = string.Empty;
+        foreach (var stopwatch in _stopwatches)
+        {
+            stopwatchListing += stopwatch.Key + "\n";
+            stopwatchListing += stopwatch.Value.ElapsedMilliseconds + "\n\n";
+        }
+        stopwatchListing = stopwatchListing[..^2];
+        if (_serilogLogger != null)
+        {
+            _serilogLogger.Information(stopwatchListing);
+            return;
+        }
+
+        _msLogger?.LogInformation(stopwatchListing);
+    }
+
+    /// <summary>
+    /// This method returns a list of the keys in the stopwatch collection
+    /// </summary>
+    /// <returns>List&lt;string&gt; containing keys for all stopwatches</returns>
+    public List<string> GetStopwatchKeys()
+    {
+        var returnList = new List<string>();
+        returnList.AddRange(_stopwatches.Keys);
+        return returnList;
+    }
+
     private bool TryStart(string eventKey, bool writeLog)
     {
         var started = TryStartStopwatch(eventKey);
