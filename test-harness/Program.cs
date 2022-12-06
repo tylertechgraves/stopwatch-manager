@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using stopwatch_manager;
 
 namespace test_harness;
@@ -29,10 +29,15 @@ public partial class Program
         Thread.Sleep(1000);
         stopwatchManager.TryStart("5");
         Thread.Sleep(1000);
+        stopwatchManager.LogStopwatchList();
+        stopwatchManager.Reset("1");
+        stopwatchManager.TryStart("1");
         stopwatchManager.TryStop("1");
-        stopwatchManager.TryStop("2");
+        stopwatchManager.TryStopAndRemove("2");
+        stopwatchManager.Restart("3");
         stopwatchManager.TryStop("3");
         stopwatchManager.TryStop("4");
         stopwatchManager.TryStop("5");
+        var stopwatchKeys = stopwatchManager.GetStopwatchKeys();
     }
 }
