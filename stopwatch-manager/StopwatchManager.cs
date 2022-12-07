@@ -148,6 +148,26 @@ public class StopwatchManager
     }
 
     /// <summary>
+    /// This method will add a new stopwatch to the collection, using
+    /// <paramref name="eventKey"/> as its key, and will start it.
+    /// If a stopwatch with a key of <paramref name="eventKey"/> already exists and is already running,
+    /// this method takes no action. If the stopwatch is found but is not running, the stopwatch
+    /// will be started.
+    /// </summary>
+    /// <param name="eventKey">Out parameter that will return an event key generated from caller identity information</param>
+    /// <param name="memberName">Optional parameter that defaults to the caller's class name</param>
+    /// <param name="sourceLineNumber">Optional parameter that defaults to the line number where this function is being called</param>
+    /// <returns>True if stopwatch is not found, is added, and is started.
+    /// True if stopped stopwatch is found, is not running, and is started. False otherwise.</returns>
+    public bool TryStartNoLog(out string eventKey,
+        [CallerMemberName] string memberName = "",
+        [CallerLineNumber] int sourceLineNumber = 0)
+    {
+        eventKey = memberName + "_" + sourceLineNumber;
+        return TryStart(eventKey, false);
+    }
+
+    /// <summary>
     /// This method will find the stopwatch with key <paramref name="eventKey"/>
     /// and will stop it if found. The stopwatch will not be removed from the collection
     /// and will not be reset. If the stopwatch is not found, this method takes no action.
