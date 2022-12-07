@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging;
 
 namespace stopwatch_manager;
@@ -74,13 +75,13 @@ public class StopwatchManager
     /// <summary>
     /// This method will add a new stopwatch to the collection, using
     /// <paramref name="eventKey"/> as its key, and will start it.
-    /// If a stopwatch with a key of <paramref name="eventKey"/> already exists,
-    /// this method takes no action. Once the stopwatch is started,
-    /// a log will be written indicating as such.
+    /// If a stopwatch with a key of <paramref name="eventKey"/> already exists and is already running,
+    /// this method takes no action. If the stopwatch is found but is not running, the stopwatch
+    /// will be started.  Once the stopwatch is started, a log will be written indicating as such.
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
     /// <returns>True if stopwatch is not found, is added, and is started.
-    /// True if stopped stopwatch is found and is restarted. False otherwise.</returns>
+    /// True if stopped stopwatch is found, is not running, and is started. False otherwise.</returns>
     public bool TryStart(string eventKey)
     {
         return TryStart(eventKey, true);
@@ -88,13 +89,35 @@ public class StopwatchManager
 
     /// <summary>
     /// This method will add a new stopwatch to the collection, using
+    /// CompilerServices to determine the caller class and line number.
+    /// The generated event key will be returned in the <paramref name="eventKey"/> out
+    /// parameter. If a stopwatch with a key of <paramref name="eventKey"/> already exists and is already running,
+    /// this method takes no action. If the stopwatch is found but is not running, the stopwatch
+    /// will be started.  Once the stopwatch is started, a log will be written indicating as such.
+    /// </summary>
+    /// <param name="eventKey">Out parameter that will return an event key generated from caller identity information</param>
+    /// <param name="memberName">Optional parameter that defaults to the caller's class name</param>
+    /// <param name="sourceLineNumber">Optional parameter that defaults to the line number where this function is being called</param>
+    /// <returns>True if stopwatch is not found, is added, and is started.
+    /// True if stopped stopwatch is found, is not running, and is started. False otherwise.</returns>
+    public bool TryStart(out string eventKey,
+        [CallerMemberName] string memberName = "",
+        [CallerLineNumber] int sourceLineNumber = 0)
+    {
+        eventKey = memberName + "_" + sourceLineNumber;
+        return TryStart(eventKey, true);
+    }
+
+    /// <summary>
+    /// This method will add a new stopwatch to the collection, using
     /// <paramref name="eventKey"/> as its key, and will start it.
-    /// If a stopwatch with a key of <paramref name="eventKey"/> already exists,
-    /// this method takes no action.
+    /// If a stopwatch with a key of <paramref name="eventKey"/> already exists and is already running,
+    /// this method takes no action. If the stopwatch is found but is not running, the stopwatch
+    /// will be started.
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
     /// <returns>True if stopwatch is not found, is added, and is started.
-    /// True if stopped stopwatch is found and is restarted. False otherwise.</returns>
+    /// True if stopped stopwatch is found, is not running, and is started. False otherwise.</returns>
     public bool TryStartNoLog(string eventKey)
     {
         return TryStart(eventKey, false);
@@ -108,7 +131,7 @@ public class StopwatchManager
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
     /// <param name="timespan">Provides timespan measurement of stopped stopwatch</param>
-    /// <returns>True if stopwatch was found and stopped; otherwise false.</returns>
+    /// <returns>True if stopwatch was found and stopped. False otherwise.</returns>
     public bool TryStop(string eventKey, out TimeSpan timespan)
     {
         return TryStop(eventKey, out timespan, true, false);
@@ -121,7 +144,7 @@ public class StopwatchManager
     /// Once stopped, this method logs the elapsed time of the stopped stopwatch.
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
-    /// <returns>True if stopwatch was found and stopped; otherwise false.</returns>
+    /// <returns>True if stopwatch was found and stopped. False otherwise.</returns>
     public bool TryStop(string eventKey)
     {
         return TryStop(eventKey, out _, true, false);
@@ -134,7 +157,7 @@ public class StopwatchManager
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
     /// <param name="timespan">Provides timespan measurement of stopped stopwatch</param>
-    /// <returns>True if stopwatch was found and stopped; otherwise false.</returns>
+    /// <returns>True if stopwatch was found and stopped. False otherwise.</returns>
     public bool TryStopNoLog(string eventKey, out TimeSpan timespan)
     {
         var stopped = TryStopStopwatch(eventKey, out timespan, false);
@@ -152,7 +175,7 @@ public class StopwatchManager
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
     /// <param name="timespan">Provides timespan measurement of stopped stopwatch</param>
-    /// <returns>True if stopwatch was found and stopped; otherwise false.</returns>
+    /// <returns>True if stopwatch was found and stopped. False otherwise.</returns>
     public bool TryStopAndRemove(string eventKey, out TimeSpan timespan)
     {
         return TryStop(eventKey, out timespan, true, true);
@@ -165,7 +188,7 @@ public class StopwatchManager
     /// Once stopped, this method logs the elapsed time of the stopped stopwatch.
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
-    /// <returns>True if stopwatch was found and stopped; otherwise false.</returns>
+    /// <returns>True if stopwatch was found and stopped. False otherwise.</returns>
     public bool TryStopAndRemove(string eventKey)
     {
         return TryStop(eventKey, out _, true, true);
@@ -177,7 +200,7 @@ public class StopwatchManager
     /// If the stopwatch is not found, this method takes no action.
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
-    /// <returns>True if stopwatch was found and stopped; otherwise false.</returns>
+    /// <returns>True if stopwatch was found and stopped. False otherwise.</returns>
     public bool TryStopAndRemoveNoLog(string eventKey)
     {
         return TryStop(eventKey, out _, false, true);
@@ -188,7 +211,7 @@ public class StopwatchManager
     /// and will reset it if found. If the stopwatch is not found, this method takes no action.
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
-    /// <returns>True if stopwatch was found and reset; otherwise false.</returns>
+    /// <returns>True if stopwatch was found and reset. False otherwise.</returns>
     public bool Reset(string eventKey)
     {
         var found = _stopwatches.TryGetValue(eventKey, out var stopwatch);
@@ -206,7 +229,7 @@ public class StopwatchManager
     /// and will reset and start it if found. If the stopwatch is not found, this method takes no action.
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
-    /// <returns>True if stopwatch was found, reset, and started; otherwise false.</returns>
+    /// <returns>True if stopwatch was found, reset, and started. False otherwise.</returns>
     public bool Restart(string eventKey)
     {
         var found = _stopwatches.TryGetValue(eventKey, out var stopwatch);
@@ -238,7 +261,7 @@ public class StopwatchManager
             return;
         }
 
-        _msLogger?.LogInformation(stopwatchListing);
+        _msLogger?.LogInformation("{stopwatchListing}", stopwatchListing);
     }
 
     /// <summary>
@@ -311,26 +334,26 @@ public class StopwatchManager
     }
 
 #pragma warning disable CA2254
-    private void LogStart(string description, string eventKey)
+    private void LogStart(string messageTemplate, string eventKey)
     {
         if (_serilogLogger != null)
         {
-            _serilogLogger.Information(description, _logPrefix, eventKey);
+            _serilogLogger.Information(messageTemplate, _logPrefix, eventKey);
             return;
         }
 
-        _msLogger?.LogInformation(description, _logPrefix, eventKey);
+        _msLogger?.LogInformation(messageTemplate, _logPrefix, eventKey);
     }
 
-    private void LogResult(string description, string eventKey, TimeSpan timespan)
+    private void LogResult(string messageTemplate, string eventKey, TimeSpan timespan)
     {
         if (_serilogLogger != null)
         {
-            _serilogLogger.Information(description, _logPrefixElapsed, eventKey, timespan.TotalMilliseconds);
+            _serilogLogger.Information(messageTemplate, _logPrefixElapsed, eventKey, timespan.TotalMilliseconds);
             return;
         }
 
-        _msLogger?.LogInformation(description, _logPrefixElapsed, eventKey, timespan.TotalMilliseconds);
+        _msLogger?.LogInformation(messageTemplate, _logPrefixElapsed, eventKey, timespan.TotalMilliseconds);
     }
 #pragma warning restore CA2254
 }
