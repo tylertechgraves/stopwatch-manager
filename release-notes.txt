@@ -17,3 +17,6 @@ Updated inaccurate XML documentation
 - 1.0.5
 Augmented readme.md
 Added constructor that lacks a logger parameter
+
+- 1.0.6
+Added TryStartNoLog() that generates a stopwatch key using caller identity information
