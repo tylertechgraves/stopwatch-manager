@@ -36,7 +36,7 @@ or manually add the XML yourself to your .csproj file:
 ```
 
 The releases on this GitHub repo mirror the versions published on nuget.org, so feel
-free to use the current release version from the repo when adding xml manually
+free to use the current release version from the repo when adding XML manually
 to your project definition.
 
 ## Usage
