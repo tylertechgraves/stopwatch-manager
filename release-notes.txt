@@ -9,3 +9,11 @@ Automation of NuGet release notes
 
 - 1.0.3
 Added Restart(), LogStopwatchList(), and GetStopwatchKeys() 
+
+- 1.0.4
+Added TryStart() that generates a stopwatch key using caller identity information
+Updated inaccurate XML documentation
+
+- 1.0.5
+Augmented readme.md
+Added constructor that lacks a logger parameter

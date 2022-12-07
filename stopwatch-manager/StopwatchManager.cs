@@ -73,6 +73,30 @@ public class StopwatchManager
     }
 
     /// <summary>
+    /// Stopwatch manager constructor. If you use this constructor, logs will never be written.
+    /// </summary>
+    public StopwatchManager()
+    {
+        _serilogLogger = null;
+        _msLogger = null;
+        _stopwatches = new();
+    }
+
+    /// <summary>
+    /// Stopwatch manager constructor. If you use this constructor, logs will never be written.
+    /// </summary>
+    /// <param name="logPrefix">The string used to prefix initial stopwatch logs</param>
+    /// <param name="logPrefixElapsed">A string used to prefix elapsed time stopwatch logs</param>
+    public StopwatchManager(string logPrefix, string logPrefixElapsed)
+    {
+        _serilogLogger = null;
+        _msLogger = null;
+        _stopwatches = new();
+        _logPrefix = logPrefix;
+        _logPrefixElapsed = logPrefixElapsed;
+    }
+
+    /// <summary>
     /// This method will add a new stopwatch to the collection, using
     /// <paramref name="eventKey"/> as its key, and will start it.
     /// If a stopwatch with a key of <paramref name="eventKey"/> already exists and is already running,
@@ -248,6 +272,10 @@ public class StopwatchManager
     /// </summary>
     public void LogStopwatchList()
     {
+
+        if (_msLogger == null && _serilogLogger == null)
+            return;
+
         var stopwatchListing = string.Empty;
         foreach (var stopwatch in _stopwatches)
         {
@@ -336,6 +364,9 @@ public class StopwatchManager
 #pragma warning disable CA2254
     private void LogStart(string messageTemplate, string eventKey)
     {
+        if (_msLogger == null && _serilogLogger == null)
+            return;
+
         if (_serilogLogger != null)
         {
             _serilogLogger.Information(messageTemplate, _logPrefix, eventKey);
@@ -347,6 +378,9 @@ public class StopwatchManager
 
     private void LogResult(string messageTemplate, string eventKey, TimeSpan timespan)
     {
+        if (_msLogger == null && _serilogLogger == null)
+            return;
+
         if (_serilogLogger != null)
         {
             _serilogLogger.Information(messageTemplate, _logPrefixElapsed, eventKey, timespan.TotalMilliseconds);
