@@ -15,8 +15,8 @@
     <Description>A Concurrent Stopwatch Manager for .NET</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <!-- <PackageReleaseNotes>$([System.IO.File]::ReadAllText("../release-notes.txt"))</PackageReleaseNotes> -->
     <PackageTags>.net stopwatch manager concurrent timer core dictionary</PackageTags>
+    <PackageIcon>images/stopwatch-manager.png</PackageIcon>
   </PropertyGroup>
 
   <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\"/>
+    <None Include="..\images\stopwatch-manager.png" Pack="true" PackagePath="\images"/>
   </ItemGroup>
 
   <ItemGroup>

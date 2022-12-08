@@ -9,6 +9,7 @@ on:
       - 'Dockerfile'
       - 'README.md'
       - 'release-notes.txt'
+      - 'images/**'
 concurrency:
   group: ${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true

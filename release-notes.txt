@@ -23,3 +23,6 @@ Added TryStartNoLog() that generates a stopwatch key using caller identity infor
 
 - 1.0.7
 Correction in readme.md
+
+- 1.0.8
+Added NuGet icon
