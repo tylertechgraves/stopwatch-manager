@@ -11,7 +11,7 @@ it creates a concurrent dictionary of stopwatches, each with its own unique key 
 Simply start a new stopwatch, and a stopwatch gets added to the collection and is started.
 Stop, reset, or remove any stopwatch using a key generated at the time it was started.
 
-The stopwatch manager supports Microsoft.Extensions.Logging and Serilog loggers and, by default,
+The stopwatch manager supports Microsoft.Extensions.Logging loggers and, by default,
 logs when a stopwatch is started or stopped. Elapsed time is logged when the watch is stopped, by default.
 
 There are also options to suppress logging, as stopping a stopwatch also returns the elapsed time via
@@ -74,7 +74,7 @@ var stopwatchManager = new StopwatchManager();
 bool started = stopwatchManager.TryStart(out var eventKey)
 ```
 
-Stopwatch manager works with any Microsoft.Extensions.Logging or Serilog logger instance
+Stopwatch manager works with any Microsoft.Extensions.Logging logger instance
 and logs when a stopwatch is started or stopped. When stopped, the log includes the
 elapsed milliseconds of the stopwatch at the time it was stopped.
 
