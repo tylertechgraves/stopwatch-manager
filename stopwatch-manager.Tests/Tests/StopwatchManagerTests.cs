@@ -85,13 +85,14 @@ public class StopwatchManagerTests : BaseTest
     Assert.True(stopped);
     Assert.Equal(mockLogger.Invocations.Count, testCase.FinalLogCount);
 
-    var removed = stopwatchManager.TryStopAndRemove(eventKey);
+    var removed = stopwatchManager.TryStopAndRemove(eventKey, out var timespan);
     Assert.True(removed);
+    Assert.IsType<TimeSpan>(timespan);
 
     removed = stopwatchManager.TryStopAndRemove(eventKey);
     Assert.False(removed);
 
-    stopped = stopwatchManager.TryStopNoLog("fakekey", out var timespan);
+    stopped = stopwatchManager.TryStopNoLog("fakekey", out timespan);
     Assert.False(stopped);
     Assert.IsType<TimeSpan>(timespan);
 
@@ -115,18 +116,18 @@ public class StopwatchManagerTests : BaseTest
       new TestTryStartNoLogParams
       {
           CaseName = "Successful stopwatch start",
-          EventKey = "TestTryStartNoLog_159",
+          EventKey = "TestTryStartNoLog_160",
       },
       new TestTryStartNoLogParams
       {
           CaseName = "Successful stopwatch start",
-          EventKey = "TestTryStartNoLog_159",
+          EventKey = "TestTryStartNoLog_160",
           SendNullLogger = true,
       },
       new TestTryStartNoLogParams
       {
           CaseName = "Successful stopwatch start",
-          EventKey = "TestTryStartNoLog_159",
+          EventKey = "TestTryStartNoLog_160",
           SendNoLogger = true,
       },
     };
@@ -160,7 +161,6 @@ public class StopwatchManagerTests : BaseTest
     Assert.True(started);
     Assert.NotNull(eventKey);
     Assert.Equal(testCase.EventKey, eventKey);
-    AssertLogs(mockLogger, "Information", Array.Empty<string>());
     
     started = stopwatchManager.TryStartNoLog(eventKey);
     Assert.False(started);
@@ -168,6 +168,15 @@ public class StopwatchManagerTests : BaseTest
     var stopped = stopwatchManager.TryStopNoLog(eventKey, out var timespan);
     Assert.True(stopped);
     Assert.IsType<TimeSpan>(timespan);
+
+    var removed = stopwatchManager.TryStopAndRemoveNoLog(eventKey);
+    Assert.True(removed);
+
+    var result = stopwatchManager.TryStop(eventKey, out timespan);
+    Assert.False(result);
+    Assert.IsType<TimeSpan>(timespan);
+
+    AssertLogs(mockLogger, "Information", Array.Empty<string>());
   }
   #endregion
 }
