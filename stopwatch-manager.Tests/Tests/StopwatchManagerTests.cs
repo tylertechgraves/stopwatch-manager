@@ -3,18 +3,14 @@ using Moq;
 
 namespace stopwatch_manager.Tests;
 
-public class StopwatchManagerTests
+public class StopwatchManagerTests : BaseTest
 {
-  private static void AssertLogs(Mock<ILogger<StopwatchManager>> logger, string type, string[] expectedLogs)
-  {
-    Assert.All(expectedLogs, m => Assert.Contains(m, logger.Invocations.Where(i => i.Arguments[0].ToString() == type).Select(i => i.Arguments[2].ToString())));
-    Assert.All(logger.Invocations.Where(i => i.Arguments[0].ToString() == type).Select(i => i.Arguments[2].ToString()), m => Assert.Contains(m, expectedLogs));
-  }
 
   #region TestTryStart
   public class TestTryStartParams : TestParams
   {
     public bool Started { get; set; } = true;
+    public string EventKey { get; set; } = string.Empty;
   }
 
   public static TheoryData<TestTryStartParams> TestTryStartParamsData =>
@@ -23,6 +19,7 @@ public class StopwatchManagerTests
       new TestTryStartParams
       {
           CaseName = "Successful stopwatch start",
+          EventKey = "TestTryStart_39",
       },
     };
 
@@ -30,7 +27,13 @@ public class StopwatchManagerTests
   [MemberData(nameof(TestTryStartParamsData))]
   public void TestTryStart(TestTryStartParams testCase)
   {
-    
+    var (_, mockLogger) = NewTypedLogger<StopwatchManager>();
+
+    var stopwatchManager = new StopwatchManager(mockLogger.Object);
+
+    stopwatchManager.TryStart(out var eventKey);
+    Assert.NotNull(eventKey);
+    Assert.Equal(testCase.EventKey, eventKey);
   }
   #endregion
 
