@@ -351,7 +351,7 @@ public class StopwatchManager
         if (_msLogger == null)
             return;
 
-        _msLogger?.LogInformation(messageTemplate, _logPrefix, eventKey);
+        _msLogger.LogInformation(messageTemplate, _logPrefix, eventKey);
     }
 
     private void LogResult(string messageTemplate, string eventKey, TimeSpan timespan)
@@ -359,7 +359,7 @@ public class StopwatchManager
         if (_msLogger == null)
             return;
 
-        _msLogger?.LogInformation(messageTemplate, _logPrefixElapsed, eventKey, timespan.TotalMilliseconds);
+        _msLogger.LogInformation(messageTemplate, _logPrefixElapsed, eventKey, timespan.TotalMilliseconds);
     }
 #pragma warning restore CA2254
 }

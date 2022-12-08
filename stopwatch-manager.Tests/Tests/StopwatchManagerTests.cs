@@ -25,12 +25,12 @@ public class StopwatchManagerTests : BaseTest
       new TestTryStartParams
       {
           CaseName = "Successful stopwatch start",
-          EventKey = "TestTryStart_57",
+          EventKey = "TestTryStart_58",
       },
       new TestTryStartParams
       {
           CaseName = "Successful stopwatch start",
-          EventKey = "TestTryStart_57",
+          EventKey = "TestTryStart_58",
           SendNullLogger = true,
       },
     };
@@ -40,10 +40,11 @@ public class StopwatchManagerTests : BaseTest
   public void TestTryStart(TestTryStartParams testCase)
   {
     var (_, mockLogger) = NewTypedLogger<StopwatchManager>();
+    StopwatchManager stopwatchManager;
+
 #pragma warning disable CS8600
     ILogger nullLogger = null;
 #pragma warning restore CS8600
-    StopwatchManager stopwatchManager;
 
     if (!testCase.SendNullLogger)
       stopwatchManager = new StopwatchManager(mockLogger.Object);
