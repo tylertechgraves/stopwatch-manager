@@ -16,14 +16,6 @@ trim_trailing_whitespace = false
 [Makefile]
 indent_style = tab
 
-# To ignore a folder mark it as "generated_code=true"
-# [/some/folder/path/**]
-# generated_code = true
-
-# To ignore a specific file (for example, the generated SDK):
-# [/some/sdk/folder/path/client.cs]
-# generated_code = true
-
 [*.cs]
 indent_style = space
 indent_size = 4

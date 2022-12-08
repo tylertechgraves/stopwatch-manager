@@ -5,7 +5,9 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stopwatch-manager", "stopwatch-manager\stopwatch-manager.csproj", "{D59C03A0-7327-4FAC-977E-EF4F1B158F74}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test-harness", "test-harness\test-harness.csproj", "{F48103BA-BF85-46EC-9156-3AF24B097FCF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stopwatch-manager.Tests", "stopwatch-manager.Tests\stopwatch-manager.Tests.csproj", "{ACFA5811-45BD-40AA-8371-3FD112282B6C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stopwatch-manager.IntegrationTests", "stopwatch-manager.IntegrationTests\stopwatch-manager.IntegrationTests.csproj", "{19F0F5B5-F5D5-4C77-A52E-35D2709C6A7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,9 +22,13 @@ Global
 		{D59C03A0-7327-4FAC-977E-EF4F1B158F74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D59C03A0-7327-4FAC-977E-EF4F1B158F74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D59C03A0-7327-4FAC-977E-EF4F1B158F74}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F48103BA-BF85-46EC-9156-3AF24B097FCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F48103BA-BF85-46EC-9156-3AF24B097FCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F48103BA-BF85-46EC-9156-3AF24B097FCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F48103BA-BF85-46EC-9156-3AF24B097FCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACFA5811-45BD-40AA-8371-3FD112282B6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACFA5811-45BD-40AA-8371-3FD112282B6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACFA5811-45BD-40AA-8371-3FD112282B6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACFA5811-45BD-40AA-8371-3FD112282B6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19F0F5B5-F5D5-4C77-A52E-35D2709C6A7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19F0F5B5-F5D5-4C77-A52E-35D2709C6A7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19F0F5B5-F5D5-4C77-A52E-35D2709C6A7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19F0F5B5-F5D5-4C77-A52E-35D2709C6A7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
