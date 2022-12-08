@@ -45,5 +45,5 @@ reportgenerator-install: ## install dotnet-reportgenerator-globaltool
 
 .PHONY: test-coverage-ci
 test-coverage-ci: reportgenerator-install ## run tests with code coverage and generate reports for ci
-	@dotnet test --collect:"XPlat Code Coverage" -r ./TestResults --logger GitHubActions
+	@dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger GitHubActions
 	@reportgenerator "-reports:./TestResults/*/coverage.cobertura.xml" "-targetdir:./TestResults" "-reporttypes:JsonSummary;TextSummary"
