@@ -1,3 +1,11 @@
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S), Linux)
+	OPEN=xdg-open
+endif
+ifeq ($(UNAME_S), Darwin)
+	OPEN=open
+endif
+
 .PHONY: format
 format: ## format all files
 	@dotnet format --report format-report.json
