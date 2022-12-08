@@ -26,3 +26,6 @@ Correction in readme.md
 
 - 1.0.8
 Added NuGet icon
+
+- 1.0.9
+Updated readme.md
