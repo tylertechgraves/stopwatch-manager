@@ -1,3 +1,4 @@
+![Stopwatch Manager](/images/stopwatch-manager.png)
 # Stopwatch Manager for .NET
 
 Have you ever had to record timings for a multi-threaded application and realized you needed
