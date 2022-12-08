@@ -19,7 +19,7 @@ public class StopwatchManagerTests : BaseTest
       new TestTryStartParams
       {
           CaseName = "Successful stopwatch start",
-          EventKey = "TestTryStart_39",
+          EventKey = "TestTryStart_34",
       },
     };
 
