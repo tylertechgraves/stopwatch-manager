@@ -325,20 +325,17 @@ public class StopwatchManager
 
     private bool TryStopStopwatch(string key, out TimeSpan timespan, bool remove)
     {
-        var found = _stopwatches.TryGetValue(key, out var stopwatch);
-        if (found)
+        _stopwatches.TryGetValue(key, out var stopwatch);
+        if (stopwatch != null)
         {
-            if (stopwatch != null)
-            {
-                stopwatch.Stop();
-                timespan = stopwatch.Elapsed;
-                stopwatch.Reset();
+            stopwatch.Stop();
+            timespan = stopwatch.Elapsed;
+            stopwatch.Reset();
 
-                if (remove)
-                    _stopwatches.TryRemove(key, out _);
+            if (remove)
+                _stopwatches.TryRemove(key, out _);
 
-                return true;
-            }
+            return true;
         }
 
         timespan = new TimeSpan();
