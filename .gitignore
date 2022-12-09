@@ -478,3 +478,4 @@ $RECYCLE.BIN/
 nupkgs/**
 stopwatch-manager/nupkgs/**
 format-report.json
+TestResults

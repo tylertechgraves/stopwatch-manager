@@ -29,3 +29,9 @@ Added NuGet icon
 
 - 1.0.9
 Updated readme.md
+
+- 1.0.10
+Removed explicit Serilog support in favor of simply taking in ILogger instance
+Added unit tests and unit test automation
+Ordered stopwatch list log by elapsed milliseconds descending
+Ordered stopwatch key list by key name ascending

@@ -13,7 +13,6 @@ namespace stopwatch_manager;
 public class StopwatchManager
 {
     private readonly ConcurrentDictionary<string, Stopwatch> _stopwatches;
-    private readonly Serilog.ILogger? _serilogLogger;
     private readonly ILogger? _msLogger;
     private const string LOG_PREFIX = "TIMELOG";
     private const string LOG_PREFIX_ELAPSED = "TIMELOG_ELAPSED";
@@ -23,36 +22,9 @@ public class StopwatchManager
     /// <summary>
     /// Stopwatch manager constructor
     /// </summary>
-    /// <param name="logger">A Serilog ILogger instance that can be used for logging in the consuming application</param>
-    public StopwatchManager(Serilog.ILogger logger)
-    {
-        _serilogLogger = logger;
-        _msLogger = null;
-        _stopwatches = new();
-    }
-
-    /// <summary>
-    /// Stopwatch manager constructor
-    /// </summary>
-    /// <param name="logger">A Serilog ILogger instance that can be used for logging in the consuming application</param>
-    /// <param name="logPrefix">The string used to prefix initial stopwatch logs</param>
-    /// <param name="logPrefixElapsed">A string used to prefix elapsed time stopwatch logs</param>
-    public StopwatchManager(Serilog.ILogger logger, string logPrefix, string logPrefixElapsed)
-    {
-        _serilogLogger = logger;
-        _msLogger = null;
-        _stopwatches = new();
-        _logPrefix = logPrefix;
-        _logPrefixElapsed = logPrefixElapsed;
-    }
-
-    /// <summary>
-    /// Stopwatch manager constructor
-    /// </summary>
     /// <param name="logger">A Microsoft.Extensions.Logging.ILogger instance that can be used for logging in the consuming application</param>
     public StopwatchManager(ILogger logger)
     {
-        _serilogLogger = null;
         _msLogger = logger;
         _stopwatches = new();
     }
@@ -65,7 +37,6 @@ public class StopwatchManager
     /// <param name="logPrefixElapsed">A string used to prefix elapsed time stopwatch logs</param>
     public StopwatchManager(ILogger logger, string logPrefix, string logPrefixElapsed)
     {
-        _serilogLogger = null;
         _msLogger = logger;
         _stopwatches = new();
         _logPrefix = logPrefix;
@@ -77,7 +48,6 @@ public class StopwatchManager
     /// </summary>
     public StopwatchManager()
     {
-        _serilogLogger = null;
         _msLogger = null;
         _stopwatches = new();
     }
@@ -89,7 +59,6 @@ public class StopwatchManager
     /// <param name="logPrefixElapsed">A string used to prefix elapsed time stopwatch logs</param>
     public StopwatchManager(string logPrefix, string logPrefixElapsed)
     {
-        _serilogLogger = null;
         _msLogger = null;
         _stopwatches = new();
         _logPrefix = logPrefix;
@@ -288,38 +257,35 @@ public class StopwatchManager
     }
 
     /// <summary>
-    /// This method logs each stopwatch key and its current elapsed milliseconds
+    /// This method logs each stopwatch key and its current elapsed milliseconds;
+    /// stopwatches are ordered by their elapsed milliseconds descending.
     /// </summary>
     public void LogStopwatchList()
     {
-
-        if (_msLogger == null && _serilogLogger == null)
+        if (_msLogger == null)
             return;
 
         var stopwatchListing = string.Empty;
-        foreach (var stopwatch in _stopwatches)
+        foreach (var stopwatch in _stopwatches.OrderByDescending(sw => sw.Value.ElapsedMilliseconds))
         {
             stopwatchListing += stopwatch.Key + "\n";
             stopwatchListing += stopwatch.Value.ElapsedMilliseconds + "\n\n";
         }
+        // Remove trailing \n\n
         stopwatchListing = stopwatchListing[..^2];
-        if (_serilogLogger != null)
-        {
-            _serilogLogger.Information(stopwatchListing);
-            return;
-        }
 
         _msLogger?.LogInformation("{stopwatchListing}", stopwatchListing);
     }
 
     /// <summary>
-    /// This method returns a list of the keys in the stopwatch collection
+    /// This method returns an ordered list of the keys in the stopwatch collection
     /// </summary>
-    /// <returns>List&lt;string&gt; containing keys for all stopwatches</returns>
+    /// <returns>List&lt;string&gt; containing keys for all stopwatches, ordered by key value</returns>
     public List<string> GetStopwatchKeys()
     {
         var returnList = new List<string>();
         returnList.AddRange(_stopwatches.Keys);
+        returnList.Sort();
         return returnList;
     }
 
@@ -361,20 +327,17 @@ public class StopwatchManager
 
     private bool TryStopStopwatch(string key, out TimeSpan timespan, bool remove)
     {
-        var found = _stopwatches.TryGetValue(key, out var stopwatch);
-        if (found)
+        _stopwatches.TryGetValue(key, out var stopwatch);
+        if (stopwatch != null)
         {
-            if (stopwatch != null)
-            {
-                stopwatch.Stop();
-                timespan = stopwatch.Elapsed;
-                stopwatch.Reset();
+            stopwatch.Stop();
+            timespan = stopwatch.Elapsed;
+            stopwatch.Reset();
 
-                if (remove)
-                    _stopwatches.TryRemove(key, out _);
+            if (remove)
+                _stopwatches.TryRemove(key, out _);
 
-                return true;
-            }
+            return true;
         }
 
         timespan = new TimeSpan();
@@ -384,30 +347,18 @@ public class StopwatchManager
 #pragma warning disable CA2254
     private void LogStart(string messageTemplate, string eventKey)
     {
-        if (_msLogger == null && _serilogLogger == null)
+        if (_msLogger == null)
             return;
 
-        if (_serilogLogger != null)
-        {
-            _serilogLogger.Information(messageTemplate, _logPrefix, eventKey);
-            return;
-        }
-
-        _msLogger?.LogInformation(messageTemplate, _logPrefix, eventKey);
+        _msLogger.LogInformation(messageTemplate, _logPrefix, eventKey);
     }
 
     private void LogResult(string messageTemplate, string eventKey, TimeSpan timespan)
     {
-        if (_msLogger == null && _serilogLogger == null)
+        if (_msLogger == null)
             return;
 
-        if (_serilogLogger != null)
-        {
-            _serilogLogger.Information(messageTemplate, _logPrefixElapsed, eventKey, timespan.TotalMilliseconds);
-            return;
-        }
-
-        _msLogger?.LogInformation(messageTemplate, _logPrefixElapsed, eventKey, timespan.TotalMilliseconds);
+        _msLogger.LogInformation(messageTemplate, _logPrefixElapsed, eventKey, timespan.TotalMilliseconds);
     }
 #pragma warning restore CA2254
 }
