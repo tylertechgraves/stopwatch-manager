@@ -190,4 +190,29 @@ public class StopwatchManagerTests : BaseTest
     AssertLogs(mockLogger, "Information", Array.Empty<string>());
   }
   #endregion
+
+  [Fact]
+  public void TestReset()
+  {
+    var (_, mockLogger) = NewTypedLogger<StopwatchManager>();
+    var stopwatchManager = new StopwatchManager(mockLogger.Object, "TEST_LOG_PREFIX", "TEST_LOGPREFIX_ELAPSED");
+    Assert.True(stopwatchManager.TryStart("testevent"));
+    AssertLogs(mockLogger, "Information", new string [] { "TEST_LOG_PREFIX: testevent timer started" });
+    Assert.True(stopwatchManager.Reset("testevent"));
+    Assert.False(stopwatchManager.Reset("incorrectTestEvent"));
+    Assert.True(stopwatchManager.TryStop("testevent"));
+    Assert.Single(GetLogsThatStartWith(mockLogger, "Information", "TEST_LOGPREFIX_ELAPSED: testevent"));
+  }
+
+  [Fact]
+  public void TestRestart()
+  {
+    var (_, mockLogger) = NewTypedLogger<StopwatchManager>();
+    var stopwatchManager = new StopwatchManager("TEST_LOG_PREFIX", "TEST_LOGPREFIX_ELAPSED");
+    Assert.True(stopwatchManager.TryStart("testevent"));
+    Assert.True(stopwatchManager.Restart("testevent"));
+    Assert.False(stopwatchManager.Restart("incorrectTestEvent"));
+    Assert.True(stopwatchManager.TryStop("testevent"));
+    AssertLogs(mockLogger, "Information", Array.Empty<string>());
+  }
 }
