@@ -236,4 +236,24 @@ public class StopwatchManagerTests : BaseTest
     else
       Assert.Fail("Second elapsed time was not a double");
   }
+
+  [Fact]
+  public void TestLogStopwatchListNoLogger()
+  {
+    var stopwatchManager = new StopwatchManager();
+    Assert.True(stopwatchManager.TryStart("testevent"));
+    Thread.Sleep(100);
+    Assert.True(stopwatchManager.TryStart("testevent2"));
+    stopwatchManager.LogStopwatchList();
+  }
+
+  [Fact]
+  public void TestGetStopwatchKeys()
+  {
+    var stopwatchManager = new StopwatchManager();
+    Assert.True(stopwatchManager.TryStart("testevent"));
+    Assert.True(stopwatchManager.TryStart("testevent2"));
+    var keyList = stopwatchManager.GetStopwatchKeys();
+    Assert.Equal(new List<string>{ "testevent", "testevent2" }, keyList);
+  }
 }

@@ -278,13 +278,14 @@ public class StopwatchManager
     }
 
     /// <summary>
-    /// This method returns a list of the keys in the stopwatch collection
+    /// This method returns an ordered list of the keys in the stopwatch collection
     /// </summary>
-    /// <returns>List&lt;string&gt; containing keys for all stopwatches</returns>
+    /// <returns>List&lt;string&gt; containing keys for all stopwatches, ordered by key value</returns>
     public List<string> GetStopwatchKeys()
     {
         var returnList = new List<string>();
         returnList.AddRange(_stopwatches.Keys);
+        returnList.Sort();
         return returnList;
     }
 
