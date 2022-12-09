@@ -11,6 +11,13 @@ public class StopwatchManagerTests : BaseTest
       Assert.All(logger.Invocations.Where(i => i.Arguments[0].ToString() == type).Select(i => i.Arguments[2].ToString()), m => Assert.Contains(m, expectedLogs));
   }
 
+  private IEnumerable<IInvocation> GetLogsThatStartWith(Mock<ILogger<StopwatchManager>> logger, string type, string logPrefix)
+  {
+#pragma warning disable CS8602
+    return logger.Invocations.Where(i => i.Arguments[0].ToString() == type && i.Arguments[2].ToString().StartsWith(logPrefix));
+#pragma warning restore CS8602
+  }
+
   #region TestTryStart
   public class TestTryStartParams : TestParams
   {
@@ -19,6 +26,7 @@ public class StopwatchManagerTests : BaseTest
     public bool SendNullLogger { get; set; } = false;
     public bool SendNoLogger { get; set; } = false;
     public int FinalLogCount { get; set; } = 0;
+    public string BeginningOfElapsedLog { get; set; } = string.Empty;
   }
 
   public static TheoryData<TestTryStartParams> TestTryStartParamsData =>
@@ -27,19 +35,20 @@ public class StopwatchManagerTests : BaseTest
       new TestTryStartParams
       {
           CaseName = "Successful start",
-          EventKey = "TestTryStart_72",
+          EventKey = "TestTryStart_81",
           FinalLogCount = 2,
+          BeginningOfElapsedLog = "TIMELOG_ELAPSED: TestTryStart_81"
       },
       new TestTryStartParams
       {
           CaseName = "Successful start with null logger",
-          EventKey = "TestTryStart_72",
+          EventKey = "TestTryStart_81",
           SendNullLogger = true,
       },
       new TestTryStartParams
       {
           CaseName = "Successful start with no logger",
-          EventKey = "TestTryStart_72",
+          EventKey = "TestTryStart_81",
           SendNoLogger = true,
       },
     };
@@ -84,6 +93,8 @@ public class StopwatchManagerTests : BaseTest
     var stopped = stopwatchManager.TryStop(eventKey);
     Assert.True(stopped);
     Assert.Equal(mockLogger.Invocations.Count, testCase.FinalLogCount);
+    if (!string.IsNullOrEmpty(testCase.BeginningOfElapsedLog))
+      Assert.Single(GetLogsThatStartWith(mockLogger, "Information", testCase.BeginningOfElapsedLog));
 
     var removed = stopwatchManager.TryStopAndRemove(eventKey, out var timespan);
     Assert.True(removed);
@@ -116,18 +127,18 @@ public class StopwatchManagerTests : BaseTest
       new TestTryStartNoLogParams
       {
           CaseName = "Successful stopwatch start",
-          EventKey = "TestTryStartNoLog_160",
+          EventKey = "TestTryStartNoLog_171",
       },
       new TestTryStartNoLogParams
       {
           CaseName = "Successful stopwatch start",
-          EventKey = "TestTryStartNoLog_160",
+          EventKey = "TestTryStartNoLog_171",
           SendNullLogger = true,
       },
       new TestTryStartNoLogParams
       {
           CaseName = "Successful stopwatch start",
-          EventKey = "TestTryStartNoLog_160",
+          EventKey = "TestTryStartNoLog_171",
           SendNoLogger = true,
       },
     };
