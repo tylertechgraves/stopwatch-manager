@@ -257,20 +257,21 @@ public class StopwatchManager
     }
 
     /// <summary>
-    /// This method logs each stopwatch key and its current elapsed milliseconds
+    /// This method logs each stopwatch key and its current elapsed milliseconds;
+    /// stopwatches are ordered by their elapsed milliseconds descending.
     /// </summary>
     public void LogStopwatchList()
     {
-
         if (_msLogger == null)
             return;
 
         var stopwatchListing = string.Empty;
-        foreach (var stopwatch in _stopwatches)
+        foreach (var stopwatch in _stopwatches.OrderByDescending(sw => sw.Value.ElapsedMilliseconds))
         {
             stopwatchListing += stopwatch.Key + "\n";
             stopwatchListing += stopwatch.Value.ElapsedMilliseconds + "\n\n";
         }
+        // Remove trailing \n\n
         stopwatchListing = stopwatchListing[..^2];
 
         _msLogger?.LogInformation("{stopwatchListing}", stopwatchListing);
