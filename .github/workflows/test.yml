@@ -54,6 +54,47 @@ jobs:
       line_coverage: ${{ steps.teststep.outputs.line_coverage }}
       branch_coverage: ${{ steps.teststep.outputs.branch_coverage }}
       changed: ${{ steps.changes.outputs.changed }}
+  integration-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+      # This is required because Github does not support conditionally required checks on branch protection rules. We will exit
+      # successfully if there are no changes.
+      # We have to set an output variable and check it since actions doesn't have a way to terminate early successfully.
+      - name: Check for changes
+        id: changes
+        run: |
+          current=${{ github.event.pull_request.head.sha }}
+          last=${{ github.event.pull_request.base.sha }}
+          if git diff --quiet $last $current -- stopwatch-manager stopwatch-manager.Tests Dockerfile; then
+            echo "No changes, skipping build"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Setup dotnet
+        if: steps.changes.outputs.changed != 'false'
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '7.0.x'
+      - name: Run tests
+        if: steps.changes.outputs.changed != 'false'
+        id: teststep
+        continue-on-error: true
+        run: |
+          make test-integration
+      - name: Create comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: steps.changes.outputs.changed != 'false' && steps.teststep.outcome != 'success'
+        with:
+          recreate: true
+          message: Integration tests have failed. [Click here](https://github.com/tylertechgraves/stopwatch-manager/actions/runs/${{ github.run_id }}) to see test output.
+      - name: Terminate on test failure
+        if: steps.changes.outputs.changed != 'false' && steps.teststep.outcome != 'success'
+        run: |
+          echo "Integration tests failed, see the output of previous steps"
+          exit 1
   test-base:
     runs-on: ubuntu-latest
     steps:

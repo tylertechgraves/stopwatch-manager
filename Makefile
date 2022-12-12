@@ -28,7 +28,14 @@ print-format-report-files: ## print file paths from format-report.json
 
 .PHONY: test
 test: ## run unit tests
-	@dotnet test --logger "console;verbosity=detailed"
+	@dotnet test --logger "console;verbosity=detailed" && \
+	cd ./stopwatch-manager.IntegrationTests && \
+	dotnet run stopwatch-manager.IntegrationTests.dll
+
+.PHONY: test-integration
+test-integration:
+	@cd ./stopwatch-manager.IntegrationTests && \
+	dotnet run stopwatch-manager.IntegrationTests.dll
 
 .PHONY: test-coverage
 test-coverage: ## run tests with code coverage
