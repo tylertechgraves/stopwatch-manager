@@ -35,3 +35,6 @@ Removed explicit Serilog support in favor of simply taking in ILogger instance
 Added unit tests and unit test automation
 Ordered stopwatch list log by elapsed milliseconds descending
 Ordered stopwatch key list by key name ascending
+
+- 1.0.11
+Completed and automated integration tests
