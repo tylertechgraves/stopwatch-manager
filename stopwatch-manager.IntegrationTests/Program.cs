@@ -8,9 +8,9 @@ public partial class Program
     public static void Main()
     {
         TestWithLogsNoCustomPrefix();
-        TestWithLogsAndCustomPrefix();
-        TestNoLogsNoCustomPrefix();
-        TestNoLogsAndCustomPrefix();
+        // TestWithLogsAndCustomPrefix();
+        // TestNoLogsNoCustomPrefix();
+        // TestNoLogsAndCustomPrefix();
     }
 
     private static void TestWithLogsNoCustomPrefix()
