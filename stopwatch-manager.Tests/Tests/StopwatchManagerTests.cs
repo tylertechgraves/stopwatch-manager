@@ -7,8 +7,8 @@ public class StopwatchManagerTests : BaseTest
 {
   private static void AssertLogs(Mock<ILogger<StopwatchManager>> logger, string type, string[] expectedLogs)
   {
-      Assert.All(expectedLogs, m => Assert.Contains(m, logger.Invocations.Where(i => i.Arguments[0].ToString() == type).Select(i => i.Arguments[2].ToString())));
-      Assert.All(logger.Invocations.Where(i => i.Arguments[0].ToString() == type).Select(i => i.Arguments[2].ToString()), m => Assert.Contains(m, expectedLogs));
+    Assert.All(expectedLogs, m => Assert.Contains(m, logger.Invocations.Where(i => i.Arguments[0].ToString() == type).Select(i => i.Arguments[2].ToString())));
+    Assert.All(logger.Invocations.Where(i => i.Arguments[0].ToString() == type).Select(i => i.Arguments[2].ToString()), m => Assert.Contains(m, expectedLogs));
   }
 
   private IEnumerable<IInvocation> GetLogsThatStartWith(Mock<ILogger<StopwatchManager>> logger, string type, string logPrefix)
@@ -82,10 +82,10 @@ public class StopwatchManagerTests : BaseTest
     Assert.NotNull(eventKey);
     Assert.Equal(testCase.EventKey, eventKey);
     if (!testCase.SendNullLogger && !testCase.SendNoLogger)
-      AssertLogs(mockLogger, "Information", new string [] { $"TIMELOG: {testCase.EventKey} timer started" });
+      AssertLogs(mockLogger, "Information", new string[] { $"TIMELOG: {testCase.EventKey} timer started" });
     else
       AssertLogs(mockLogger, "Information", Array.Empty<string>());
-    
+
     Assert.False(stopwatchManager.TryStart(eventKey));
 
     Assert.True(stopwatchManager.TryStop(eventKey));
@@ -165,7 +165,7 @@ public class StopwatchManagerTests : BaseTest
     Assert.True(started);
     Assert.NotNull(eventKey);
     Assert.Equal(testCase.EventKey, eventKey);
-    
+
     Assert.False(stopwatchManager.TryStartNoLog(eventKey));
 
     Assert.True(stopwatchManager.TryStopNoLog(eventKey, out var timespan));
@@ -186,7 +186,7 @@ public class StopwatchManagerTests : BaseTest
     var (_, mockLogger) = NewTypedLogger<StopwatchManager>();
     var stopwatchManager = new StopwatchManager(mockLogger.Object, "TEST_LOG_PREFIX", "TEST_LOGPREFIX_ELAPSED");
     Assert.True(stopwatchManager.TryStart("testevent"));
-    AssertLogs(mockLogger, "Information", new string [] { "TEST_LOG_PREFIX: testevent timer started" });
+    AssertLogs(mockLogger, "Information", new string[] { "TEST_LOG_PREFIX: testevent timer started" });
     Assert.True(stopwatchManager.Reset("testevent"));
     Assert.False(stopwatchManager.Reset("incorrectTestEvent"));
     Assert.True(stopwatchManager.TryStop("testevent"));
@@ -213,7 +213,7 @@ public class StopwatchManagerTests : BaseTest
     Assert.True(stopwatchManager.TryStart("testevent"));
     Thread.Sleep(100);
     Assert.True(stopwatchManager.TryStart("testevent2"));
-    AssertLogs(mockLogger, "Information", new string [] { "TIMELOG: testevent timer started", "TIMELOG: testevent2 timer started" });
+    AssertLogs(mockLogger, "Information", new string[] { "TIMELOG: testevent timer started", "TIMELOG: testevent2 timer started" });
     stopwatchManager.LogStopwatchList();
 
     // Make sure we got 3 logs
@@ -254,6 +254,6 @@ public class StopwatchManagerTests : BaseTest
     Assert.True(stopwatchManager.TryStart("testevent"));
     Assert.True(stopwatchManager.TryStart("testevent2"));
     var keyList = stopwatchManager.GetStopwatchKeys();
-    Assert.Equal(new List<string>{ "testevent", "testevent2" }, keyList);
+    Assert.Equal(new List<string> { "testevent", "testevent2" }, keyList);
   }
 }
