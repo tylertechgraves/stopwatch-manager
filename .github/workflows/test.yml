@@ -69,7 +69,7 @@ jobs:
         run: |
           current=${{ github.event.pull_request.head.sha }}
           last=${{ github.event.pull_request.base.sha }}
-          if git diff --quiet $last $current -- stopwatch-manager stopwatch-manager.Tests Dockerfile; then
+          if git diff --quiet $last $current -- stopwatch-manager stopwatch-manager.IntegrationTests Dockerfile; then
             echo "No changes, skipping build"
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
