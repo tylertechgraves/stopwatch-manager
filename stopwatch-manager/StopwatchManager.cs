@@ -364,9 +364,6 @@ public class StopwatchManager
 
         switch (granularity)
         {
-            case TimespanGranularity.Milliseconds:
-                _msLogger.LogInformation(messageTemplate, _logPrefixElapsed, eventKey, timespan.TotalMilliseconds);
-                break;
             case TimespanGranularity.Ticks:
                 _msLogger.LogInformation(messageTemplate, _logPrefixElapsed, eventKey, timespan.Ticks);
                 break;
