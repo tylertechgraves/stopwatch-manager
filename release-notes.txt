@@ -38,3 +38,8 @@ Ordered stopwatch key list by key name ascending
 
 - 1.0.11
 Completed and automated integration tests
+
+- 1.0.12
+Added ability to specify either milliseconds or ticks when stopping a stopwatch. This will
+determine whether to print milliseconds or ticks in elapsed time logs that result from
+stopping a stopwatch. Defaults to milliseconds.

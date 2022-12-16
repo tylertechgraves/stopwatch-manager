@@ -88,7 +88,7 @@ public class StopwatchManagerTests : BaseTest
 
     Assert.False(stopwatchManager.TryStart(eventKey));
 
-    Assert.True(stopwatchManager.TryStop(eventKey));
+    Assert.True(stopwatchManager.TryStop(eventKey, TimespanGranularity.Ticks));
     Assert.Equal(mockLogger.Invocations.Count, testCase.FinalLogCount);
     if (!string.IsNullOrEmpty(testCase.BeginningOfElapsedLog))
       Assert.Single(GetLogsThatStartWith(mockLogger, "Information", testCase.BeginningOfElapsedLog));

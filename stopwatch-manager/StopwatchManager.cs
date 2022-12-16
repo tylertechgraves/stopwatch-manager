@@ -144,10 +144,11 @@ public class StopwatchManager
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
     /// <param name="timespan">Provides timespan measurement of stopped stopwatch</param>
+    /// <param name="granularity">Enumeration that determines the type of measurement that appears in logs</param>
     /// <returns>True if stopwatch was found and stopped. False otherwise.</returns>
-    public bool TryStop(string eventKey, out TimeSpan timespan)
+    public bool TryStop(string eventKey, out TimeSpan timespan, TimespanGranularity granularity = TimespanGranularity.Milliseconds)
     {
-        return TryStop(eventKey, out timespan, true, false);
+        return TryStop(eventKey, out timespan, true, false, granularity);
     }
 
     /// <summary>
@@ -157,10 +158,11 @@ public class StopwatchManager
     /// Once stopped, this method logs the elapsed time of the stopped stopwatch.
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
+    /// <param name="granularity">Enumeration that determines the type of measurement that appears in logs</param>
     /// <returns>True if stopwatch was found and stopped. False otherwise.</returns>
-    public bool TryStop(string eventKey)
+    public bool TryStop(string eventKey, TimespanGranularity granularity = TimespanGranularity.Milliseconds)
     {
-        return TryStop(eventKey, out _, true, false);
+        return TryStop(eventKey, out _, true, false, granularity);
     }
 
     /// <summary>
@@ -188,10 +190,11 @@ public class StopwatchManager
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
     /// <param name="timespan">Provides timespan measurement of stopped stopwatch</param>
+    /// <param name="granularity">Enumeration that determines the type of measurement that appears in logs</param>
     /// <returns>True if stopwatch was found and stopped. False otherwise.</returns>
-    public bool TryStopAndRemove(string eventKey, out TimeSpan timespan)
+    public bool TryStopAndRemove(string eventKey, out TimeSpan timespan, TimespanGranularity granularity = TimespanGranularity.Milliseconds)
     {
-        return TryStop(eventKey, out timespan, true, true);
+        return TryStop(eventKey, out timespan, true, true, granularity);
     }
 
     /// <summary>
@@ -201,10 +204,11 @@ public class StopwatchManager
     /// Once stopped, this method logs the elapsed time of the stopped stopwatch.
     /// </summary>
     /// <param name="eventKey">Name of event being timed; used as key in stopwatch collection</param>
+    /// <param name="granularity">Enumeration that determines the type of measurement that appears in logs</param>
     /// <returns>True if stopwatch was found and stopped. False otherwise.</returns>
-    public bool TryStopAndRemove(string eventKey)
+    public bool TryStopAndRemove(string eventKey, TimespanGranularity granularity = TimespanGranularity.Milliseconds)
     {
-        return TryStop(eventKey, out _, true, true);
+        return TryStop(eventKey, out _, true, true, granularity);
     }
 
     /// <summary>
@@ -216,7 +220,7 @@ public class StopwatchManager
     /// <returns>True if stopwatch was found and stopped. False otherwise.</returns>
     public bool TryStopAndRemoveNoLog(string eventKey)
     {
-        return TryStop(eventKey, out _, false, true);
+        return TryStop(eventKey, out _, false, true, TimespanGranularity.Milliseconds);
     }
 
     /// <summary>
@@ -274,7 +278,7 @@ public class StopwatchManager
         // Remove trailing \n\n
         stopwatchListing = stopwatchListing[..^2];
 
-        _msLogger?.LogInformation("{stopwatchListing}", stopwatchListing);
+        _msLogger.LogInformation("{stopwatchListing}", stopwatchListing);
     }
 
     /// <summary>
@@ -301,14 +305,14 @@ public class StopwatchManager
         return true;
     }
 
-    private bool TryStop(string eventKey, out TimeSpan timespan, bool writeLogResult, bool remove)
+    private bool TryStop(string eventKey, out TimeSpan timespan, bool writeLogResult, bool remove, TimespanGranularity granularity)
     {
         var stopped = TryStopStopwatch(eventKey, out timespan, remove);
         if (!stopped)
             return false;
 
         if (writeLogResult)
-            LogResult("{prefix}: {eventKey} {duration}", eventKey, timespan);
+            LogResult("{prefix}: {eventKey} {duration}", eventKey, timespan, granularity);
 
         return true;
     }
@@ -353,12 +357,21 @@ public class StopwatchManager
         _msLogger.LogInformation(messageTemplate, _logPrefix, eventKey);
     }
 
-    private void LogResult(string messageTemplate, string eventKey, TimeSpan timespan)
+    private void LogResult(string messageTemplate, string eventKey, TimeSpan timespan, TimespanGranularity granularity)
     {
         if (_msLogger == null)
             return;
 
-        _msLogger.LogInformation(messageTemplate, _logPrefixElapsed, eventKey, timespan.TotalMilliseconds);
+        switch (granularity)
+        {
+            case TimespanGranularity.Ticks:
+                _msLogger.LogInformation(messageTemplate, _logPrefixElapsed, eventKey, timespan.Ticks);
+                break;
+            default:
+                _msLogger.LogInformation(messageTemplate, _logPrefixElapsed, eventKey, timespan.TotalMilliseconds);
+                break;
+        }
+
     }
 #pragma warning restore CA2254
 }
