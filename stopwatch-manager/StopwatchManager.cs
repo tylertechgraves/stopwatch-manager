@@ -278,7 +278,7 @@ public class StopwatchManager
         // Remove trailing \n\n
         stopwatchListing = stopwatchListing[..^2];
 
-        _msLogger?.LogInformation("{stopwatchListing}", stopwatchListing);
+        _msLogger.LogInformation("{stopwatchListing}", stopwatchListing);
     }
 
     /// <summary>
