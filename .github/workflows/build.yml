@@ -129,7 +129,7 @@ jobs:
         uses: NuGet/login@v1
         id: login
         with:
-          user: $NUGET_USER ${{ secrets.NUGET_USER }} for your nuget.org username (profile name), NOT your email address
+          user: ${{ secrets.NUGET_USER }}
     
       - name: pack and push nuget
         if: ${{ github.event_name == 'push' }} 
@@ -138,6 +138,4 @@ jobs:
           dotnet pack --configuration Release -o ./nupkgs /p:PackageVersion=${{ steps.semver.outputs.version }}
           dotnet nuget push "./nupkgs/stopwatch-manager.${{ steps.semver.outputs.version }}.nupkg" --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
     env:
-      NUGET_PUSH_API_KEY: "${{ secrets.NUGET_PUSH_API_KEY }}"
-      NUGET_USER: "${{ secrets.NUGET_USER }}"
       DOCKER_BUILDKIT: "1"
