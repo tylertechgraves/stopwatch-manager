@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine as netCoreBuild
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine
 ARG CONFIGURATION=Release
 WORKDIR /build
 COPY . .
