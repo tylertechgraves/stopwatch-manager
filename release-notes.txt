@@ -46,3 +46,6 @@ stopping a stopwatch. Defaults to milliseconds.
 
 - 1.0.13
 Upgraded to .NET 10
+
+- 1.0.14
+General code maintenance
