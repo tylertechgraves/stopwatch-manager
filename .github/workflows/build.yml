@@ -15,20 +15,22 @@ concurrency:
   cancel-in-progress: true
 jobs:
   build:
+    permissions:
+      id-token: write
+      contents: write
     runs-on: ubuntu-latest
-    # if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
       - name: Setup git
         run: |
           git config --global user.name "stopwatch-manager[bot]"
           git config --global user.email "github-actions@github.com"
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
         if: ${{ github.event_name == 'pull_request' }}
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
           token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
         if: ${{ github.event_name == 'push' }}
         with:
           fetch-depth: 0
@@ -46,14 +48,13 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
       - name: Determine next version
-        uses: paulhatch/semantic-version@v3.1.1
+        uses: paulhatch/semantic-version@v5.4.0
         id: semver
         with:
-          branch: "main"
           tag_prefix: "v"
           major_pattern: "(MAJOR)"
           minor_pattern: "(MINOR)"
-          format: "${major}.${minor}.${patch}"
+          version_format: "${major}.${minor}.${patch}"
       - name: Get branch
         id: getbranch
         if: ${{ github.event_name == 'pull_request' }}
@@ -61,7 +62,7 @@ jobs:
           echo "branch=${GITHUB_HEAD_REF#refs/heads/}" >> $GITHUB_OUTPUT
           echo "safebranch=$(echo -n "${GITHUB_HEAD_REF#refs/heads/}" | tr -c '[:alnum:]-' '-' | tr A-Z a-z)" >> $GITHUB_OUTPUT
       - name: Determine next version (PR)
-        uses: paulhatch/semantic-version@v3.1.1
+        uses: paulhatch/semantic-version@v5.4.0
         id: semverpr
         if: ${{ github.event_name == 'pull_request' }}
         with:
@@ -69,7 +70,7 @@ jobs:
           tag_prefix: ${{ steps.getbranch.outputs.safebranch }}-v
           major_pattern: "(MAJOR)"
           minor_pattern: "(MINOR)"
-          format: "${major}.${minor}.${patch}"
+          version_format: "${major}.${minor}.${patch}"
       - name: Build tag
         id: buildtag
         run: |
@@ -123,12 +124,18 @@ jobs:
         run: |
           cd stopwatch-manager
           dotnet pack --configuration Release -o ./nupkgs /p:PackageVersion=${{ steps.semver.outputs.version }}
+      # Get a short-lived NuGet API key
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+    
       - name: pack and push nuget
         if: ${{ github.event_name == 'push' }} 
         run: |
           cd stopwatch-manager
           dotnet pack --configuration Release -o ./nupkgs /p:PackageVersion=${{ steps.semver.outputs.version }}
-          dotnet nuget push "./nupkgs/stopwatch-manager.${{ steps.semver.outputs.version }}.nupkg" --api-key "$NUGET_PUSH_API_KEY" --source https://api.nuget.org/v3/index.json
+          dotnet nuget push "./nupkgs/stopwatch-manager.${{ steps.semver.outputs.version }}.nupkg" --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
     env:
-      NUGET_PUSH_API_KEY: "${{ secrets.NUGET_PUSH_API_KEY }}"
       DOCKER_BUILDKIT: "1"
