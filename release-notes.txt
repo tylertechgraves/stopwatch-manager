@@ -43,3 +43,6 @@ Completed and automated integration tests
 Added ability to specify either milliseconds or ticks when stopping a stopwatch. This will
 determine whether to print milliseconds or ticks in elapsed time logs that result from
 stopping a stopwatch. Defaults to milliseconds.
+
+- 1.0.13
+Upgraded to .NET 10
